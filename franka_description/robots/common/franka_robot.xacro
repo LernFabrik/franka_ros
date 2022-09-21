@@ -36,12 +36,12 @@
       <xacro:arg name="rpy" default="0 0 0" />
 
       <!-- Gazebo requires a joint to a link called "world" for statically mounted robots -->
-      <link name="world" />
+      <!-- <link name="world" />
       <joint name="world_joint" type="fixed">
         <origin xyz="$(arg xyz)" rpy="$(arg rpy)" />
         <parent link="world" />
         <child  link="$(arg arm_id)_link0" />
-      </joint>
+      </joint> -->
 
       <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/PositionJointInterface" />
       <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/PositionJointInterface" />

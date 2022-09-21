@@ -2,13 +2,48 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
 
   <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/common/table_ur.urdf.xacro" />
+  <xacro:include filename="$(find franka_description)/robots/common/kinect.xacro"/>
 
   <xacro:arg name="arm_id" default="panda" />
   <xacro:arg name="hand" default="true" />
   <xacro:arg name="gazebo" default="true" />
+  <xacro:arg name="xyz" default="0 0 0" />
+  <xacro:arg name="rpy" default="0 0 0" />
 
   <xacro:franka_robot arm_id="$(arg arm_id)"
                       joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
   </xacro:franka_robot>
+
+  <!-- setup empty world -->
+	<link name="world"/>
+
+	<!-- include platform -->
+	<xacro:table prefix="" parent="world">
+  	  <origin xyz="-0.24 -0.78 -0.75" rpy="0 0 0"/>
+	</xacro:table>
+
+
+	<joint name="world_joint" type="fixed">
+  	  <parent link="world" />
+  	  <child link = "panda_link0" />
+  	  <origin xyz="$(arg xyz)" rpy="$(arg rpy)" />
+	</joint>
+
+	<!-- include camera -->
+	<xacro:if value="$(arg gazebo)">
+	  <xacro:sensor_kinect parent="world">
+		<origin xyz="0.14 -0.76 1.22" rpy="0 ${pi/2 - 20 * pi/180} ${pi/2}"/>
+	  </xacro:sensor_kinect>
+	</xacro:if>
+
+	<xacro:unless value="$(arg gazebo)">
+	  <link name="camera_link"/>
+	  <joint name="camera_joint" type="fixed">
+		<parent link="world"/>
+		<child link="camera_link"/>
+		<origin xyz="0.08 -0.78 1.28" rpy="0 ${pi/2 - 20 * pi/180} ${pi/2}"/>
+	  </joint>
+	</xacro:unless>
 
 </robot>
